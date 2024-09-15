@@ -12,7 +12,7 @@
 
 ## Как найти?
 
-### В telegram, в поиске нужно написать RecycleTgBot.
+### В telegram, в поиске нужно написать RecycleTgBot. https://t.me/RecycleTgBot
 
 ## Какое вознаграждение?
 
