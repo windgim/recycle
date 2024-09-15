@@ -20,6 +20,6 @@
 
 ## Участники проекта
 
-- [@windgim](https://github.com/windgmim) — Программист
+- [@windgim](https://github.com/windgim) — Программист
 - [@BoLoSsEvvv](https://github.com/BoLoSsEvvv) — Программист
 - [@maktraxxer444](https://github.com/maktraxxer444) — iT менеджер
