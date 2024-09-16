@@ -7,9 +7,9 @@ token = ""
 
 bot = telebot.TeleBot(token)
 
-moderator_id_1 = 1020489957  # Данила
-moderator_id_2 = 243815412  # Богдан
-moderator_id_3 = 5708419076  # Султан
+moderator_id_1 =
+moderator_id_2 =
+moderator_id_3 = 
 
 user_states = {}
 
