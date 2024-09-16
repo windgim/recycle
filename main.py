@@ -2,6 +2,7 @@ import telebot
 from telebot import types
 import sqlite3
 import random
+import time
 
 token = ""
 
@@ -10,6 +11,27 @@ bot = telebot.TeleBot(token)
 moderator_id = 0
 
 user_states = {}
+last_video_time = {}
+
+def ending_minutes(minutes):
+    if minutes == 1:
+        return "минута"
+
+    elif 2 <= minutes % 10 <= 4:
+        return "минуты"
+
+    elif 5 <= minutes % 10 <= 9:
+        return "минут"
+
+def ending_hours(hours):
+    if hours == 1:
+        return "час"
+
+    elif 2 <= hours % 10 <= 4:
+        return "часа"
+
+    elif 5 <= hours % 10 <= 9:
+        return "часов"
 
 def main():
     markup = types.InlineKeyboardMarkup()
@@ -43,12 +65,26 @@ def welcome(message):
 @bot.callback_query_handler(func=lambda call: True)
 def buttons_check(call):
     if call.data == "video_result":
-        # Устанавливаем состояние ожидания видео от пользователя
-        user_states[call.message.chat.id] = "awaiting_video"
-        bot.send_message(
-            call.message.chat.id,
-            "Отправь видео как ты утилизируешь любой мусор. 🗑️",
-        )
+        user_id = call.message.chat.id
+        current_time = time.time()
+        last_time = last_video_time.get(user_id)
+
+        if last_time and current_time - last_time < 86400:
+            remaining_time = 86400 - (current_time - last_time)
+            hours = int(remaining_time // 3600)
+            minutes = int((remaining_time % 3600) // 60)
+            bot.send_message(
+                user_id,
+                f"Ты уже отправлял недавно видео. Подожди {hours} {ending_hours(hours)} и {minutes} {ending_minutes(minutes)}. ⌚"
+            )
+
+        else:
+            user_states[user_id] = "awaiting_video"
+            bot.send_message(
+                user_id,
+                "Отправь видео как ты утилизируешь любой мусор. 🗑️",
+            )
+
 
     elif call.data == "info":
         bot.send_message(
@@ -74,7 +110,6 @@ def buttons_check(call):
             call.message.chat.id, "Возвращаю в главное меню! ✨", reply_markup=main()
         )
 
-    # Обработка модераторских решений
     elif call.data.startswith("moderation:"):
         data = call.data.split(":")
         action = data[1]
@@ -102,7 +137,6 @@ def buttons_check(call):
 
 
         if action == "accept":
-            # Удаляем инлайн-кнопки после модерации
             bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=None)
             bot.send_message(sender_id, f"Поздравляем! Вы правильно утилизировали мусор. Вот ваш промокод на {random_service}: {random_code} 🌱")
             bot.send_message(
@@ -112,7 +146,6 @@ def buttons_check(call):
             )
 
         elif action == "reject":
-            # Удаляем инлайн-кнопки после модерации
             bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=None)
             bot.send_message(sender_id, "К сожалению, вы неправильно утилизировали мусор. ❌")
             bot.send_message(
@@ -128,15 +161,15 @@ def handle_video(message):
 
     if user_states.get(message.chat.id) == "awaiting_video":
         bot.send_message(
-            message.from_user.id,
+            user_id,
             "Спасибо за видео! Ты молодец, что выбрасываешь мусор правильно, видео отправлено на модерацию. 🎉",
         )
         bot.send_message(
-            message.from_user.id,
+            user_id,
             "После модерации, мы свяжемся с вами для вручения подарка. 🌱",
         )
         bot.send_message(
-            message.chat.id,
+            user_id,
             "Привет! Я бот, который сможет дать тебе вознаграждение за выброшенный мусор 🌍\n",
             reply_markup=main(),
         )
@@ -149,7 +182,8 @@ def handle_video(message):
         bot.forward_message(moderator_id, message.chat.id, message.message_id)
         bot.send_message(moderator_id, f"Видео от пользователя @{username}", reply_markup=markup)
 
-        user_states[message.chat.id] = None
+        user_states[user_id] = None
+        last_video_time[user_id] = time.time()
 
     else:
         bot.send_message(
