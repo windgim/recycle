@@ -7,9 +7,7 @@ token = ""
 
 bot = telebot.TeleBot(token)
 
-moderator_id_1 =
-moderator_id_2 =
-moderator_id_3 = 
+moderator_id = 0
 
 user_states = {}
 
@@ -148,14 +146,8 @@ def handle_video(message):
         btn_reject = types.InlineKeyboardButton("❌", callback_data=f"moderation:reject:{user_id}")
         markup.add(btn_accept, btn_reject)
 
-        bot.forward_message(moderator_id_1, message.chat.id, message.message_id)
-        bot.send_message(moderator_id_1, f"Видео от пользователя @{username}", reply_markup=markup)
-
-        bot.forward_message(moderator_id_2, message.chat.id, message.message_id)
-        bot.send_message(moderator_id_2, f"Видео от пользователя @{username}", reply_markup=markup)
-
-        bot.forward_message(moderator_id_3, message.chat.id, message.message_id)
-        bot.send_message(moderator_id_3, f"Видео от пользователя @{username}", reply_markup=markup)
+        bot.forward_message(moderator_id, message.chat.id, message.message_id)
+        bot.send_message(moderator_id, f"Видео от пользователя @{username}", reply_markup=markup)
 
         user_states[message.chat.id] = None
 
