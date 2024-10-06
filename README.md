@@ -26,4 +26,4 @@
 
 - [@windgim](https://github.com/windgim) — Программист
 - [@BoLoSsEvvv](https://github.com/BoLoSsEvvv) — Программист
-- [@maktraxxer444](https://github.com/maktraxxer444) — IT менеджер
+- [@maktraxxer444](https://github.com/maktraxxer444) — Project менеджер
